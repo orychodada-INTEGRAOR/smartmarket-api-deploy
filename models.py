@@ -20,7 +20,7 @@ def search_products(query, limit=50):
             MIN(pr.price) AS min_price,
             COUNT(pr.id) AS stores_count
         FROM products p
-        LEFT JOIN prices pr ON p.barcode = pr.product_id
+        LEFT JOIN prices pr ON p.barcode::bigint = pr.product_id
         WHERE p.name ILIKE %s
         GROUP BY p.barcode, p.name, p.manufacturer, p.category_id
         ORDER BY p.name
@@ -60,7 +60,7 @@ def get_product_details(barcode):
         LEFT JOIN stores s 
             ON pr.chain = s.chain 
             AND pr.store_id = s.store_id
-        WHERE pr.product_id = %s
+        WHERE pr.product_id = %s::bigint
         ORDER BY pr.price ASC
     """, (barcode,))
     prices = cur.fetchall()
@@ -86,7 +86,7 @@ def get_all_products(limit=100, offset=0):
             p.category_id,
             MIN(pr.price) AS min_price
         FROM products p
-        LEFT JOIN prices pr ON p.barcode = pr.product_id
+        LEFT JOIN prices pr ON p.barcode::bigint = pr.product_id
         GROUP BY p.barcode, p.name, p.manufacturer, p.category_id
         ORDER BY p.name
         LIMIT %s OFFSET %s
