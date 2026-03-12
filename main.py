@@ -5,7 +5,7 @@ SmartMarket API - Main Application
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from models import get_stats
+from models import get_stats, get_categories
 from db import test_connection
 
 # ייבוא routers
@@ -77,7 +77,7 @@ def health_check():
 def stats():
     """סטטיסטיקות"""
     return get_stats()
-@app.get("/categories")
+@app.get("/categories")@app.get("/categories")
 def categories():
     """Get all categories"""
     cats = get_categories()
