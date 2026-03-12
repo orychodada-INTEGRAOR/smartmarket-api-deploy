@@ -51,15 +51,13 @@ def get_product_details(barcode):
 
     cur.execute("""
         SELECT 
-            pr.chain,
+            s.chain,
             pr.store_id,
             s.store_name,
             pr.price,
             pr.updated_at
         FROM prices pr
-        LEFT JOIN stores s 
-            ON pr.chain = s.chain 
-            AND pr.store_id = s.store_id
+        LEFT JOIN stores s ON pr.store_id = s.id
         WHERE pr.product_id = %s::bigint
         ORDER BY pr.price ASC
     """, (barcode,))
@@ -105,23 +103,20 @@ def get_stores():
 
     cur.execute("""
         SELECT 
-            s.id,
-            s.chain,
-            s.store_id,
-            s.store_name,
-            COUNT(pr.id) AS products_count
-        FROM stores s
-        LEFT JOIN prices pr 
-            ON s.chain = pr.chain 
-            AND s.store_id = pr.store_id
-        GROUP BY s.id, s.chain, s.store_id, s.store_name
-        ORDER BY s.chain, s.store_id
+            id,
+            chain,
+            store_id,
+            store_name,
+            city
+        FROM stores
+        ORDER BY chain, store_id
     """)
 
     rows = cur.fetchall()
     conn.close()
 
     return rows
+
 
 def get_stats():
     """סטטיסטיקות כלליות"""

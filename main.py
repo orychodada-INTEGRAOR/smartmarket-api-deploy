@@ -190,7 +190,7 @@ def stores():
                 "chain": r[1],
                 "store_id": r[2],
                 "store_name": r[3],
-                "products_count": r[4]
+                "city": r[4] if len(r) > 4 else None
             }
             for r in rows
         ]
