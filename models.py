@@ -123,7 +123,6 @@ def get_stores():
 
     return rows
 
-
 def get_stats():
     """סטטיסטיקות כלליות"""
     conn = get_connection()
