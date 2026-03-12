@@ -1,31 +1,15 @@
 """
-SmartMarket API - Main Application
-ה-API הראשי של SmartMarket
+SmartMarket API
+FastAPI backend for price comparison
 """
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from models import get_stats, get_categories
-from db import test_connection
 
-# ייבוא routers
-try:
-    from routers.products import router as products_router
-    from routers.stores import router as stores_router  
-    from routers.compare import router as compare_router
-except ImportError:
-    import routers_products as products_module
-    import routers_stores as stores_module
-    import routers_compare as compare_module
-    
-    products_router = products_module.router
-    stores_router = stores_module.router
-    compare_router = compare_module.router
-
-# יצירת אפליקציה
 app = FastAPI(
     title="SmartMarket API",
-    description="API להשוואת מחירים ומוצרים",
+    description="Price comparison across Israeli supermarkets",
     version="1.0.0"
 )
 
@@ -38,48 +22,35 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# חיבור routers
-app.include_router(products_router)
-app.include_router(stores_router)
-app.include_router(compare_router)
-
-
-@app.get("/", tags=["Root"])
+@app.get("/")
 def root():
-    """דף הבית"""
+    """API info"""
     return {
         "name": "SmartMarket API",
         "version": "1.0.0",
-        "status": "running",
+        "status": "online",
         "endpoints": {
+            "stats": "/stats",
+            "categories": "/categories",
             "products": "/products",
-            "search": "/products/search?q=חלב",
-            "product_details": "/products/{barcode}",
-            "stores": "/stores",
-            "compare": "/compare/basket",
-            "docs": "/docs",
-            "stats": "/stats"
+            "search": "/products/search?q=query",
+            "stores": "/stores"
         }
     }
 
+@app.get("/health")
+def health():
+    """Health check"""
+    return {"status": "healthy"}
 
-@app.get("/health", tags=["Health"])
-def health_check():
-    """בדיקת תקינות"""
-    db_status = test_connection()
-    return {
-        "api": "healthy",
-        "database": db_status
-    }
-
-
-@app.get("/stats", tags=["Stats"])
+@app.get("/stats")
 def stats():
-    """סטטיסטיקות"""
+    """Database statistics"""
     return get_stats()
-@app.get("/categories")@app.get("/categories")
+
+@app.get("/categories")
 def categories():
-    """Get all categories"""
+    """Get all categories with product counts"""
     cats = get_categories()
     
     return {
@@ -94,7 +65,3 @@ def categories():
             for c in cats
         ]
     }
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
