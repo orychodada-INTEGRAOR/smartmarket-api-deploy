@@ -77,7 +77,23 @@ def health_check():
 def stats():
     """סטטיסטיקות"""
     return get_stats()
-
+@app.get("/categories")
+def categories():
+    """Get all categories"""
+    cats = get_categories()
+    
+    return {
+        "categories": [
+            {
+                "id": c[0],
+                "name": c[1],
+                "name_he": c[2],
+                "icon": c[3],
+                "product_count": c[4]
+            }
+            for c in cats
+        ]
+    }
 
 if __name__ == "__main__":
     import uvicorn

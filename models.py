@@ -277,3 +277,22 @@ def get_stats():
         'stores': stores_count,
         'prices': prices_count
     }
+def get_categories():
+    """Get all categories with product counts"""
+    conn = get_connection()
+    cur = conn.cursor()
+    
+    cur.execute("""
+        SELECT c.id, c.name, c.name_he, c.icon,
+               COUNT(p.id) as product_count
+        FROM categories c
+        LEFT JOIN products p ON p.category_id = c.id
+        GROUP BY c.id, c.name, c.name_he, c.icon
+        ORDER BY c.name_he
+    """)
+    
+    categories = cur.fetchall()
+    cur.close()
+    conn.close()
+    
+    return categories
