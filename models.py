@@ -44,19 +44,17 @@ def get_product_details(barcode):
     conn = get_connection()
     cur = conn.cursor()
 
-    # פרטי מוצר
     cur.execute("""
         SELECT barcode, name, manufacturer, category_id
         FROM products
         WHERE barcode = %s
     """, (barcode,))
-
     product = cur.fetchone()
+
     if not product:
         conn.close()
         return None
 
-    # מחירים
     cur.execute("""
         SELECT 
             pr.chain,
@@ -71,8 +69,8 @@ def get_product_details(barcode):
         WHERE pr.product_id = %s
         ORDER BY pr.price ASC
     """, (barcode,))
-
     prices = cur.fetchall()
+
     conn.close()
 
     return {
