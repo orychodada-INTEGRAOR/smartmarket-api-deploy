@@ -280,7 +280,7 @@ def get_stats():
 def get_categories():
     """Get all categories with product counts"""
     conn = get_connection()
-    cur = conn.cursor()
+    cur = conn.cursor()  # ← לא RealDictCursor!
     
     cur.execute("""
         SELECT c.id, c.name, c.name_he, c.icon,
